@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
-import { PlusCircle, ArrowRight, Loader2, Calendar } from "lucide-react";
+import { PlusCircle, ArrowRight, Loader2, Calendar, CheckCircle2 } from "lucide-react";
 import { CATEGORIES, CHANNELS } from "@/lib/utils/constants";
 import { formatDateFull } from "@/lib/utils/formatCurrency";
 import { addTransaction } from "@/lib/actions";
@@ -36,11 +36,16 @@ export default function QuickEntryForm({ activeCycleId }: QuickEntryFormProps) {
 
   const [state, formAction, isPending] = useActionState<ActionState, FormData>(handleAction, { error: "", success: false });
 
-  // Reset form on success
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  // Reset form on success and trigger success animation
   useEffect(() => {
     if (state.success) {
       formRef.current?.reset();
       setFormattedAmount("");
+      setShowSuccess(true);
+      const timer = setTimeout(() => setShowSuccess(false), 2500);
+      return () => clearTimeout(timer);
     }
   }, [state]);
 
@@ -74,6 +79,31 @@ export default function QuickEntryForm({ activeCycleId }: QuickEntryFormProps) {
 
   return (
     <section id="quick-entry-section" className="bg-white dark:bg-dark-surface p-8 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-white/5 relative overflow-hidden">
+
+      {/* Success Toast */}
+      <div
+        className={`absolute inset-0 z-20 flex flex-col items-center justify-center rounded-[2.5rem] transition-all duration-500 pointer-events-none ${
+          showSuccess
+            ? "opacity-100 backdrop-blur-sm bg-white/80 dark:bg-slate-900/80"
+            : "opacity-0"
+        }`}
+      >
+        <div
+          className={`flex flex-col items-center gap-4 transition-all duration-500 ${
+            showSuccess ? "scale-100 translate-y-0" : "scale-75 translate-y-6"
+          }`}
+        >
+          <div className="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center">
+            <CheckCircle2
+              className={`w-12 h-12 text-emerald-500 transition-all duration-700 ${
+                showSuccess ? "scale-100 opacity-100" : "scale-50 opacity-0"
+              }`}
+            />
+          </div>
+          <p className="text-lg font-black text-emerald-600 dark:text-emerald-400">Entry Saved!</p>
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400">Transaction recorded successfully</p>
+        </div>
+      </div>
       <div className="flex items-center gap-3 mb-8">
         <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center text-accent">
           <PlusCircle className="w-5 h-5" />

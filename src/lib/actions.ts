@@ -45,3 +45,45 @@ export async function markAsTransferred(transactionId: string) {
 
   revalidatePath("/");
 }
+
+export async function deleteTransaction(transactionId: string) {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("transactions")
+    .delete()
+    .eq("id", transactionId);
+
+  if (error) {
+    console.error("Error deleting transaction:", error);
+    throw new Error("Failed to delete transaction.");
+  }
+
+  revalidatePath("/");
+}
+
+export async function updateTransaction(
+  transactionId: string,
+  data: Partial<TransactionFormData>
+) {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("transactions")
+    .update({
+      description: data.description,
+      amount: data.amount,
+      channel: data.channel,
+      category_id: data.category?.toLowerCase(),
+      cost_type: data.cost_type,
+      date: data.date ? new Date(data.date).toISOString() : undefined,
+    })
+    .eq("id", transactionId);
+
+  if (error) {
+    console.error("Error updating transaction:", error);
+    throw new Error("Failed to update transaction.");
+  }
+
+  revalidatePath("/");
+}
