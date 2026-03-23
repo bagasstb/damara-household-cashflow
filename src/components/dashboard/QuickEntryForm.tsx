@@ -139,15 +139,7 @@ export default function QuickEntryForm({ activeCycleId }: QuickEntryFormProps) {
           </div>
           <div className="relative">
             <div 
-              onClick={() => {
-                try {
-                  (document.getElementById('date-input') as HTMLInputElement)?.showPicker();
-                } catch (e) {
-                  // Fallback for extremely old browsers that don't support showPicker
-                  document.getElementById('date-input')?.focus();
-                }
-              }}
-              className="w-full h-14 bg-slate-50 dark:bg-slate-900 border-2 border-transparent focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10 rounded-2xl px-6 flex items-center justify-between text-sm font-bold transition-all dark:text-white group-disabled:opacity-50 cursor-pointer"
+              className="w-full h-14 bg-slate-50 dark:bg-slate-900 border-2 border-transparent focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10 rounded-2xl px-6 flex items-center justify-between text-sm font-bold transition-all dark:text-white group-disabled:opacity-50"
             >
               <span>{formatDateFull(selectedDate || todayStr)}</span>
               <Calendar className="w-5 h-5 text-slate-400 dark:text-slate-500" />
@@ -160,7 +152,7 @@ export default function QuickEntryForm({ activeCycleId }: QuickEntryFormProps) {
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
               disabled={isPending}
-              className="absolute inset-0 w-full h-full opacity-0 pointer-events-none"
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer pointer-events-auto"
             />
           </div>
         </div>

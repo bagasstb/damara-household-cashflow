@@ -18,6 +18,10 @@ export const metadata: Metadata = {
     description: "Smart cycle-based expense tracking for couples",
     type: "website",
   },
+  icons: {
+    icon: "/icon.png?v=5",
+    apple: "/apple-icon.png?v=5",
+  },
 };
 
 export default function RootLayout({
