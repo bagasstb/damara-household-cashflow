@@ -1,9 +1,9 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
-import { PlusCircle, ArrowRight, Loader2, Calendar, CheckCircle2 } from "lucide-react";
+import { PlusCircle, ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
 import { CATEGORIES, CHANNELS } from "@/lib/utils/constants";
-import { formatDateFull } from "@/lib/utils/formatCurrency";
+import { formatDateFull, formatCurrency } from "@/lib/utils/formatCurrency";
 import { addTransaction } from "@/lib/actions";
 
 interface QuickEntryFormProps {
@@ -18,9 +18,13 @@ export default function QuickEntryForm({ activeCycleId }: QuickEntryFormProps) {
   const handleAction = async (state: ActionState, formData: FormData): Promise<ActionState> => {
     if (!activeCycleId) return { error: "No active cycle.", success: false };
     
+    // Process formatted amount back to number
+    const rawAmount = formData.get('amount-display') as string;
+    const cleanAmount = Number(rawAmount.replace(/\D/g, ""));
+
     try {
       await addTransaction(activeCycleId, {
-        amount: Number(formData.get('amount')),
+        amount: cleanAmount,
         description: formData.get('description') as string,
         category: formData.get('category') as string,
         channel: formData.get('channel') as string,
@@ -37,37 +41,30 @@ export default function QuickEntryForm({ activeCycleId }: QuickEntryFormProps) {
   const [state, formAction, isPending] = useActionState<ActionState, FormData>(handleAction, { error: "", success: false });
 
   const [showSuccess, setShowSuccess] = useState(false);
+  const [displayAmount, setDisplayAmount] = useState("");
+  const todayStr = new Date().toISOString().split('T')[0];
+  const [selectedDate, setSelectedDate] = useState(todayStr);
 
   // Reset form on success and trigger success animation
   useEffect(() => {
     if (state.success) {
       formRef.current?.reset();
-      setFormattedAmount("");
+      setDisplayAmount("");
       setShowSuccess(true);
       const timer = setTimeout(() => setShowSuccess(false), 2500);
       return () => clearTimeout(timer);
     }
   }, [state]);
 
-  const [formattedAmount, setFormattedAmount] = useState("");
-  
-  const todayStr = new Date().toISOString().split('T')[0];
-  const [selectedDate, setSelectedDate] = useState(todayStr);
-
-  // Handle number formatting with dot separators
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Remove all non-digits
     const rawValue = e.target.value.replace(/\D/g, "");
     if (!rawValue) {
-      setFormattedAmount("");
+      setDisplayAmount("");
       return;
     }
-    // Convert to number and format with dots (IDR style)
     const formatted = new Intl.NumberFormat("id-ID").format(Number(rawValue));
-    setFormattedAmount(formatted);
+    setDisplayAmount(formatted);
   };
-
-  const cleanAmount = parseInt(formattedAmount.replace(/\D/g, ""), 10) || 0;
 
   if (!activeCycleId) {
     return (
@@ -139,14 +136,7 @@ export default function QuickEntryForm({ activeCycleId }: QuickEntryFormProps) {
           </div>
           <div className="relative">
             <div 
-              onClick={() => {
-                try {
-                  (document.getElementById('date-input') as HTMLInputElement)?.showPicker();
-                } catch (e) {
-                  document.getElementById('date-input')?.focus();
-                }
-              }}
-              className="w-full h-14 bg-slate-50 dark:bg-slate-900 border-2 border-transparent focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10 rounded-2xl px-6 flex items-center justify-between text-sm font-bold transition-all dark:text-white group-disabled:opacity-50 cursor-pointer"
+              className="w-full h-14 bg-slate-50 dark:bg-slate-900 border-2 border-transparent focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10 rounded-2xl px-6 flex items-center justify-between text-sm font-bold transition-all dark:text-white group-disabled:opacity-50"
             >
               <span>{formatDateFull(selectedDate || todayStr)}</span>
             </div>
@@ -158,7 +148,7 @@ export default function QuickEntryForm({ activeCycleId }: QuickEntryFormProps) {
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
               disabled={isPending}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer pointer-events-auto"
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer pointer-events-auto z-10"
             />
           </div>
         </div>
@@ -172,25 +162,21 @@ export default function QuickEntryForm({ activeCycleId }: QuickEntryFormProps) {
             Nominal (Rp)
           </label>
           <div className="relative">
-            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-sm font-black text-slate-400">
-              Rp
-            </span>
-            <input
-              type="hidden"
-              name="amount"
-              value={cleanAmount > 0 ? cleanAmount : ""}
-            />
             <input
               id="nominal-input"
+              name="amount-display"
               type="text"
               inputMode="numeric"
-              placeholder="0"
               required
-              value={formattedAmount}
+              placeholder="0"
+              value={displayAmount}
               onChange={handleAmountChange}
               disabled={isPending}
-              className="w-full h-14 bg-slate-50 dark:bg-slate-900 border-2 border-transparent focus:border-primary focus:ring-4 focus:ring-primary/10 rounded-2xl pl-12 pr-6 text-xl font-black focus:outline-none transition-all dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-700 disabled:opacity-50"
+              className="w-full h-14 bg-slate-50 dark:bg-slate-900 border-2 border-transparent focus:border-primary focus:ring-4 focus:ring-primary/10 rounded-2xl px-14 text-lg font-mono font-black focus:outline-none transition-all dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-700 disabled:opacity-50"
             />
+            <div className="absolute left-6 top-1/2 -translate-y-1/2 text-sm font-black text-slate-400">
+              Rp
+            </div>
           </div>
         </div>
 
