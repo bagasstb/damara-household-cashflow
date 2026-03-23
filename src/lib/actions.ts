@@ -76,6 +76,7 @@ export async function updateTransaction(
       channel: data.channel,
       category_id: data.category?.toLowerCase(),
       cost_type: data.cost_type,
+      is_reimbursable: data.is_reimbursable,
       date: data.date ? new Date(data.date).toISOString() : undefined,
     })
     .eq("id", transactionId);

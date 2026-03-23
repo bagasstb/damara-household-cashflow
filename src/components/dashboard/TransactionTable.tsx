@@ -33,6 +33,7 @@ export default function TransactionTable({ transactions }: TransactionTableProps
     channel: "",
     cost_type: "",
     date: todayStr,
+    is_reimbursable: false,
   });
 
   const showToast = useCallback((message: string, type: ToastType) => {
@@ -49,6 +50,7 @@ export default function TransactionTable({ transactions }: TransactionTableProps
       channel: tx.channel,
       cost_type: tx.cost_type,
       date: tx.date.split("T")[0],
+      is_reimbursable: tx.is_reimbursable || false,
     });
   };
 
@@ -69,6 +71,7 @@ export default function TransactionTable({ transactions }: TransactionTableProps
         category: editForm.category,
         channel: editForm.channel,
         cost_type: editForm.cost_type,
+        is_reimbursable: editForm.is_reimbursable,
         date: editForm.date,
       });
       setEditId(null);
@@ -259,6 +262,22 @@ export default function TransactionTable({ transactions }: TransactionTableProps
                               <option value="urgent cost">Urgent Cost</option>
                               <option value="household maintenance">Household Maintenance</option>
                             </select>
+                          </div>
+                          {/* Reimburse Checkbox */}
+                          <div className="flex items-center gap-3 pl-1 h-10">
+                            <input
+                              type="checkbox"
+                              id={`reimburse-${tx.id}`}
+                              checked={editForm.is_reimbursable}
+                              onChange={(e) => setEditForm((f) => ({ ...f, is_reimbursable: e.target.checked }))}
+                              className="w-4 h-4 rounded border-slate-300 text-primary accent-primary cursor-pointer"
+                            />
+                            <label
+                              htmlFor={`reimburse-${tx.id}`}
+                              className="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 cursor-pointer select-none"
+                            >
+                              Reimburse?
+                            </label>
                           </div>
                         </div>
                         <div className="flex items-center gap-3 justify-end">

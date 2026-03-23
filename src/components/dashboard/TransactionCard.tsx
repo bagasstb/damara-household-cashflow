@@ -35,6 +35,7 @@ export default function TransactionCard({ transaction: tx, showDate = true }: Tr
     channel: tx.channel,
     cost_type: tx.cost_type,
     date: todayStr,
+    is_reimbursable: tx.is_reimbursable || false,
   });
 
   const showToast = useCallback((message: string, type: ToastType) => {
@@ -56,6 +57,7 @@ export default function TransactionCard({ transaction: tx, showDate = true }: Tr
         category: editForm.category,
         channel: editForm.channel,
         cost_type: editForm.cost_type,
+        is_reimbursable: editForm.is_reimbursable,
         date: editForm.date,
       });
       setMode("view");
@@ -149,6 +151,22 @@ export default function TransactionCard({ transaction: tx, showDate = true }: Tr
                   ))}
                 </select>
               </div>
+            </div>
+            {/* Reimburse Checkbox */}
+            <div className="flex items-center gap-3 pl-1 pt-1">
+              <input
+                type="checkbox"
+                id={`reimburse-card-${tx.id}`}
+                checked={editForm.is_reimbursable}
+                onChange={(e) => setEditForm((f) => ({ ...f, is_reimbursable: e.target.checked }))}
+                className="w-5 h-5 rounded border-slate-300 text-primary accent-primary cursor-pointer"
+              />
+              <label
+                htmlFor={`reimburse-card-${tx.id}`}
+                className="text-sm font-bold text-slate-700 dark:text-slate-300 cursor-pointer select-none"
+              >
+                Need to reimburse?
+              </label>
             </div>
           </div>
           <div className="flex gap-3 mt-4">
