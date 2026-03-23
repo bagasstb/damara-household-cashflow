@@ -97,14 +97,27 @@ export default function TransactionCard({ transaction: tx, showDate = true }: Tr
         <div className="bg-blue-50/60 dark:bg-blue-900/15 p-5 rounded-3xl border border-blue-200 dark:border-blue-500/20">
           <p className="text-[10px] font-black uppercase text-primary dark:text-blue-400 tracking-wider mb-4">Edit Transaction</p>
           <div className="space-y-3">
-            <div className="grid grid-cols-1 gap-3">
-              <div className="space-y-1">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1 relative">
                 <label className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Date</label>
+                <div 
+                  onClick={() => {
+                    try {
+                      (document.getElementById(`date-edit-${tx.id}`) as HTMLInputElement)?.showPicker();
+                    } catch (e) {
+                      document.getElementById(`date-edit-${tx.id}`)?.focus();
+                    }
+                  }}
+                  className="w-full h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-3 flex items-center text-sm font-bold dark:text-white cursor-pointer"
+                >
+                  {editForm.date}
+                </div>
                 <input
+                  id={`date-edit-${tx.id}`}
                   type="date"
                   value={editForm.date}
                   onChange={(e) => setEditForm((f) => ({ ...f, date: e.target.value }))}
-                  className="w-full h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-3 text-sm font-bold dark:text-white focus:outline-none"
+                  className="absolute inset-0 w-full h-full opacity-0 pointer-events-none"
                 />
               </div>
               <div className="space-y-1">
@@ -126,7 +139,7 @@ export default function TransactionCard({ transaction: tx, showDate = true }: Tr
                 className="w-full h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-3 text-sm font-bold dark:text-white focus:outline-none"
               />
             </div>
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Category</label>
                 <select

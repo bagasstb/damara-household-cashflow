@@ -92,3 +92,18 @@ select,
 button {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Hide native date picker icon to prevent overlap on small screens */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none !important;
+  -webkit-appearance: none !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+}
+
+input[type="date"] {
+  -webkit-appearance: none;
+  appearance: none;
+}

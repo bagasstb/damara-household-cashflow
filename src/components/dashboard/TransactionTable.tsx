@@ -194,13 +194,26 @@ export default function TransactionTable({ transactions }: TransactionTableProps
                       <td colSpan={6} className="px-8 py-5">
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
                           {/* Date */}
-                          <div className="space-y-1">
+                          <div className="space-y-1 relative">
                             <label className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Date</label>
+                            <div 
+                              onClick={() => {
+                                try {
+                                  (document.getElementById(`date-edit-table-${tx.id}`) as HTMLInputElement)?.showPicker();
+                                } catch (e) {
+                                  document.getElementById(`date-edit-table-${tx.id}`)?.focus();
+                                }
+                              }}
+                              className="w-full h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-3 flex items-center text-sm font-bold dark:text-white cursor-pointer"
+                            >
+                              {editForm.date}
+                            </div>
                             <input
+                              id={`date-edit-table-${tx.id}`}
                               type="date"
                               value={editForm.date}
                               onChange={(e) => setEditForm((f) => ({ ...f, date: e.target.value }))}
-                              className="w-full h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-3 text-sm font-bold dark:text-white focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                              className="absolute inset-0 w-full h-full opacity-0 pointer-events-none"
                             />
                           </div>
                           {/* Amount */}
