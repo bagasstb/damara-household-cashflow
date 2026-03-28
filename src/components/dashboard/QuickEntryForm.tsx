@@ -12,6 +12,7 @@ interface QuickEntryFormProps {
 
 export default function QuickEntryForm({ activeCycleId }: QuickEntryFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
+  const dateInputRef = useRef<HTMLInputElement>(null);
 
   type ActionState = { error: string; success: boolean; timestamp?: number };
 
@@ -135,18 +136,20 @@ export default function QuickEntryForm({ activeCycleId }: QuickEntryFormProps) {
             </button>
           </div>
           <div className="relative">
-            <div 
-              className="w-full h-14 bg-slate-50 dark:bg-slate-900 border-2 border-transparent focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10 rounded-2xl px-6 flex items-center justify-between text-sm font-bold transition-all dark:text-white group-disabled:opacity-50"
+            <div
+              className="w-full h-14 bg-slate-50 dark:bg-slate-900 border-2 border-transparent focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10 rounded-2xl px-6 flex items-center justify-between text-sm font-bold transition-all dark:text-white cursor-pointer group-disabled:opacity-50"
             >
               <span>{formatDateFull(selectedDate || todayStr)}</span>
             </div>
             <input
+              ref={dateInputRef}
               id="date-input"
               name="date"
               type="date"
               required
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
+              onClick={(e) => (e.target as HTMLInputElement).showPicker()}
               disabled={isPending}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer pointer-events-auto z-10"
             />

@@ -196,14 +196,15 @@ export default function TransactionTable({ transactions }: TransactionTableProps
                           {/* Date */}
                           <div className="space-y-1 relative">
                             <label className="text-[9px] font-black uppercase text-secondary/50 dark:text-slate-500 tracking-wider">Date</label>
-                            <div className="w-full h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-3 flex items-center text-sm font-bold dark:text-white">
-                              {editForm.date}
+                            <div className="w-full h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-3 flex items-center text-sm font-bold dark:text-white cursor-pointer">
+                              {formatDateFull(editForm.date)}
                             </div>
                             <input
                               id={`date-edit-table-${tx.id}`}
                               type="date"
                               value={editForm.date}
                               onChange={(e) => setEditForm((f) => ({ ...f, date: e.target.value }))}
+                              onClick={(e) => (e.target as HTMLInputElement).showPicker()}
                               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer pointer-events-auto z-10 pt-5"
                             />
                           </div>

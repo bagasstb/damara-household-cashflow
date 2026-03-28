@@ -12,6 +12,7 @@ import { addThrSpending } from "@/lib/thr-actions";
 
 export default function ThrEntryForm() {
   const formRef = useRef<HTMLFormElement>(null);
+  const dateInputRef = useRef<HTMLInputElement>(null);
 
   type ActionState = { error: string; success: boolean; timestamp?: number };
 
@@ -141,16 +142,20 @@ export default function ThrEntryForm() {
             </button>
           </div>
           <div className="relative">
-            <div className="w-full h-14 bg-slate-50 dark:bg-slate-900 border-2 border-transparent focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 rounded-2xl px-6 flex items-center justify-between text-sm font-bold transition-all dark:text-white">
+            <div
+              className="w-full h-14 bg-slate-50 dark:bg-slate-900 border-2 border-transparent focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 rounded-2xl px-6 flex items-center justify-between text-sm font-bold transition-all dark:text-white cursor-pointer"
+            >
               <span>{formatDateFull(selectedDate || todayStr)}</span>
             </div>
             <input
+              ref={dateInputRef}
               id="thr-date-input"
               name="date"
               type="date"
               required
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
+              onClick={(e) => (e.target as HTMLInputElement).showPicker()}
               disabled={isPending}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer pointer-events-auto z-10"
             />
