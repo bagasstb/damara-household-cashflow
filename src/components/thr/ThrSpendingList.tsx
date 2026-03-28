@@ -105,20 +105,23 @@ export default function ThrSpendingList({ items }: ThrSpendingListProps) {
                 {dayItems.map((item) => (
                   <div
                     key={item.id}
-                    className="group flex items-center gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all"
+                    className="group flex items-start md:items-center gap-3 md:gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all"
                   >
-                    <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-500 shrink-0">
+                    <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-500 shrink-0 mt-0.5 md:mt-0">
                       <ShoppingBag className="w-4 h-4" />
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm text-slate-800 dark:text-slate-200 truncate">
+                      <p className="font-bold text-sm text-slate-800 dark:text-slate-200">
                         {item.description}
+                      </p>
+                      <p className="font-mono font-black text-sm text-emerald-600 dark:text-emerald-400 mt-1 md:hidden">
+                        Rp {formatCurrency(item.amount)}
                       </p>
                     </div>
 
                     <div className="flex items-center gap-3 shrink-0">
-                      <div className="text-right">
+                      <div className="text-right hidden md:block">
                         <p className="font-mono font-black text-sm text-slate-800 dark:text-white">
                           Rp {formatCurrency(item.amount)}
                         </p>
@@ -127,7 +130,7 @@ export default function ThrSpendingList({ items }: ThrSpendingListProps) {
                       <button
                         onClick={() => handleDelete(item.id)}
                         disabled={isPending && deletingId === item.id}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all opacity-0 group-hover:opacity-100 cursor-pointer disabled:opacity-50"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer disabled:opacity-50"
                       >
                         {isPending && deletingId === item.id ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
