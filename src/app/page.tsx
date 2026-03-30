@@ -92,7 +92,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
           {/* Left Column: Daily Cashflow & Analytics */}
           <div className="lg:col-span-8 space-y-8">
             <BudgetLimits budgets={budgets} />
-            <DailyCashflow transactions={transactions} />
+            <DailyCashflow transactions={transactions} cycleId={cycle.id} />
             <CategoryAnalytics spending={spending} summary={summary} />
           </div>
 

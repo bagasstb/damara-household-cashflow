@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { LayoutDashboard, History, Plus, PieChart, Receipt } from "lucide-react";
 
 export default function MobileNav() {
@@ -24,8 +25,9 @@ export default function MobileNav() {
           Home
         </span>
       </button>
-      <button
-        onClick={(e) => scrollTo(e, "daily-cashflow-section")}
+
+      <Link
+        href="/cashflow"
         id="mobile-nav-history"
         className="flex flex-col items-center gap-1 text-secondary dark:text-slate-400 min-w-[48px] min-h-[48px] justify-center transition-transform active:scale-90"
       >
@@ -33,7 +35,7 @@ export default function MobileNav() {
         <span className="text-[9px] font-black uppercase tracking-tighter">
           Cashflow
         </span>
-      </button>
+      </Link>
 
       <div className="-mt-12 group">
         <button

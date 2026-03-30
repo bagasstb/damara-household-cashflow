@@ -312,11 +312,16 @@ export default function TransactionTable({ transactions }: TransactionTableProps
             })}
           </tbody>
         </table>
-        <div className="p-6 border-t border-slate-100 dark:border-white/5 text-center">
-          <a href="#" className="text-xs font-black uppercase text-primary dark:text-blue-400 hover:tracking-widest transition-all duration-300">
-            View Full Cycle History
-          </a>
-        </div>
+        {transactions.length > 0 && (
+          <div className="px-8 py-5 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
+            <span className="text-xs font-black uppercase text-secondary/50 dark:text-slate-500 tracking-wider">
+              {transactions.length} transactions
+            </span>
+            <span className="text-sm font-mono font-black tracking-tighter text-slate-700 dark:text-slate-300">
+              Total: {formatCurrency(transactions.reduce((sum, t) => sum + t.amount, 0))}
+            </span>
+          </div>
+        )}
       </div>
     </>
   );
