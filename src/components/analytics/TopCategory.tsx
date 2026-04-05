@@ -1,5 +1,6 @@
-import { Utensils, Flame } from "lucide-react";
+import { Flame } from "lucide-react";
 import { formatCurrency } from "@/lib/utils/formatCurrency";
+import { getCategoryConfig } from "@/lib/utils/constants";
 import type { CategorySpending } from "@/types";
 
 interface TopCategoryProps {
@@ -14,6 +15,10 @@ export default function TopCategory({ category }: TopCategoryProps) {
       </div>
     );
   }
+
+  const config = getCategoryConfig(category.category);
+  const Icon = config?.icon;
+
   return (
     <div className="bg-primary p-6 rounded-[2rem] shadow-xl shadow-primary/20 text-white relative overflow-hidden">
       <div className="relative z-10">
@@ -21,8 +26,8 @@ export default function TopCategory({ category }: TopCategoryProps) {
           Top Category
         </div>
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-white backdrop-blur-sm">
-            <Utensils className="w-6 h-6" />
+          <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-white backdrop-blur-sm shrink-0">
+            {Icon ? <Icon className="w-6 h-6" /> : null}
           </div>
           <div>
             <h4 className="text-xl font-black">{category.category}</h4>

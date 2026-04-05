@@ -3,6 +3,7 @@
 import { Wallet, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/app/providers";
 import CycleSelector from "./CycleSelector";
+import NewCycleButton from "./NewCycleButton";
 import type { Cycle } from "@/types";
 
 interface HeaderProps {
@@ -30,7 +31,10 @@ export default function Header({ cycles = [], activeCycle }: HeaderProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          {/* New Cycle button */}
+          <NewCycleButton />
+
           <button
             onClick={toggleTheme}
             className="w-11 h-11 flex items-center justify-center rounded-2xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300 transition-all cursor-pointer"

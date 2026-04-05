@@ -4,6 +4,7 @@ import { ArrowLeft, ReceiptText } from "lucide-react";
 import { getDashboardData, getAllCycles } from "@/lib/services";
 import CashflowAllTransactions from "@/components/cashflow/CashflowAllTransactions";
 import CycleSelectorDropdown from "@/components/cashflow/CycleSelectorDropdown";
+import ImportFromSheetButton from "@/components/cashflow/ImportFromSheetButton";
 
 export const metadata: Metadata = {
   title: "Riwayat Cashflow — Household Cashflow",
@@ -59,7 +60,21 @@ export default async function CashflowPage({
         </div>
       </header>
 
-      <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-8 pb-24 md:pb-8">
+      <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-8 pb-24 md:pb-8 space-y-6">
+        {/* Import from Google Sheet */}
+        <div className="bg-white dark:bg-dark-surface rounded-[2rem] border border-slate-100 dark:border-white/5 p-5 shadow-sm">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <h2 className="text-sm font-black tracking-tight">Import dari Google Sheet</h2>
+              <p className="text-[11px] text-secondary dark:text-slate-400 font-bold mt-0.5">
+                Sync data baru dari sheet Januari – April. Duplikat otomatis dilewati.
+              </p>
+            </div>
+            <ImportFromSheetButton />
+          </div>
+        </div>
+
+        {/* Transaction List */}
         <CashflowAllTransactions transactions={transactions} />
       </main>
     </div>

@@ -26,7 +26,6 @@ export async function addTransaction(
     throw new Error("Failed to add transaction.");
   }
 
-  // Clear cache for the home page so data is refreshed
   revalidatePath("/");
 }
 
@@ -88,3 +87,63 @@ export async function updateTransaction(
 
   revalidatePath("/");
 }
+
+export interface CreateCycleInput {
+  name: string;
+  start_date: string;
+  end_date: string;
+  savings_target: number;
+}
+
+export async function createCycle(input: CreateCycleInput): Promise<{ cycleId: string }> {
+  const supabase = await createClient();
+
+  // 1. Create the new cycle
+  const { data: newCycle, error: cycleError } = await supabase
+    .from("cycles")
+    .insert({
+      name: input.name,
+      start_date: input.start_date,
+      end_date: input.end_date,
+      savings_target: input.savings_target,
+    })
+    .select("id")
+    .single();
+
+  if (cycleError || !newCycle) {
+    throw new Error(cycleError?.message ?? "Failed to create cycle.");
+  }
+
+  // 2. Find the most recent previous cycle (by start_date, excluding new one)
+  const { data: prevCycles } = await supabase
+    .from("cycles")
+    .select("id")
+    .neq("id", newCycle.id)
+    .order("start_date", { ascending: false })
+    .limit(1);
+
+  const prevCycleId = prevCycles?.[0]?.id;
+
+  // 3. Auto-copy budget limits from previous cycle
+  if (prevCycleId) {
+    const { data: prevBudgets } = await supabase
+      .from("budget_limits")
+      .select("category_id, label, limit_amount")
+      .eq("cycle_id", prevCycleId);
+
+    if (prevBudgets && prevBudgets.length > 0) {
+      const newBudgets = prevBudgets.map((b) => ({
+        cycle_id: newCycle.id,
+        category_id: b.category_id,
+        label: b.label,
+        limit_amount: b.limit_amount,
+      }));
+
+      await supabase.from("budget_limits").insert(newBudgets);
+    }
+  }
+
+  revalidatePath("/");
+  return { cycleId: newCycle.id };
+}
+
