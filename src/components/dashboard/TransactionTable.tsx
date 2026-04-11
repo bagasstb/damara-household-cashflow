@@ -203,6 +203,7 @@ export default function TransactionTable({ transactions }: TransactionTableProps
                               id={`date-edit-table-${tx.id}`}
                               type="date"
                               value={editForm.date}
+                              max={todayStr}
                               onChange={(e) => setEditForm((f) => ({ ...f, date: e.target.value }))}
                               onClick={(e) => (e.target as HTMLInputElement).showPicker()}
                               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer pointer-events-auto z-10 pt-5"

@@ -236,3 +236,65 @@ export async function importFromGoogleSheet(): Promise<ImportResult> {
 
   return result;
 }
+
+export async function syncBudgetLimitsFromSheet() {
+  const supabase = getSupabase();
+  const { data: categories } = await supabase.from("categories").select("id, name");
+  const categoryMap: Record<string, string> = {};
+  for (const cat of categories ?? []) {
+    categoryMap[cat.name.toLowerCase().trim()] = cat.id;
+  }
+
+  const targetCategories = {
+    "jajan dean": "T6",
+    "transport dean": "T11",
+    "jajan bagas": "O6",
+    "transport bagas": "O8",
+    "laundry": "O11",
+  };
+
+  const toUpdate: { cycle_id: string; category_id: string; limit_amount: number }[] = [];
+  const errors: string[] = [];
+
+  for (const sheet of SHEETS) {
+    for (const [catName, cell] of Object.entries(targetCategories)) {
+      const categoryId = categoryMap[catName];
+      if (!categoryId) {
+        errors.push(`[${sheet.name}] Category "${catName}" not found in DB`);
+        continue;
+      }
+      try {
+        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${sheet.gid}&range=${cell}:${cell}`;
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error(`Fetch failed ${res.status}`);
+        let text = await res.text();
+        const parsedAmount = parseAmount(text);
+        if (parsedAmount > 0) {
+          toUpdate.push({
+            cycle_id: sheet.cycleId,
+            category_id: categoryId,
+            limit_amount: parsedAmount,
+          });
+        }
+      } catch (e: unknown) {
+        errors.push(`[${sheet.name}] Failed to fetch cell ${cell}: ${e instanceof Error ? e.message : String(e)}`);
+      }
+    }
+  }
+
+  let updatedCount = 0;
+  for (const item of toUpdate) {
+    const { error } = await supabase
+      .from("budget_limits")
+      .update({ limit_amount: item.limit_amount })
+      .eq("cycle_id", item.cycle_id)
+      .eq("category_id", item.category_id);
+    if (error) {
+      errors.push(`Failed to update ${item.category_id}: ${error.message}`);
+    } else {
+      updatedCount++;
+    }
+  }
+
+  return { success: true, updated: updatedCount, errors };
+}

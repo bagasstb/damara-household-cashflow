@@ -131,7 +131,7 @@ export const mockBudgetLimits: BudgetLimit[] = [
     cycle_id: "cycle-1",
     category_id: "cat-transport",
     label: "Transport Bagas",
-    limit_amount: 108_000,
+    limit_amount: 108_909,
     spent: 230_500,
     category: { id: "cat-transport", name: "Transport", icon: "car", color: "blue", sort_order: 1 },
   },

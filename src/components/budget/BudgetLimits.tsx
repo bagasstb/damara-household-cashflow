@@ -1,5 +1,6 @@
 import type { BudgetLimit } from "@/types";
 import BudgetCard from "./BudgetCard";
+import SyncLimitButton from "./SyncLimitButton";
 
 interface BudgetLimitsProps {
   budgets: BudgetLimit[];
@@ -30,12 +31,7 @@ export default function BudgetLimits({ budgets }: BudgetLimitsProps) {
         <h2 className="text-xl font-black tracking-tight leading-none">
           Budget Limits
         </h2>
-        <a
-          href="#"
-          className="text-[10px] font-black uppercase text-primary dark:text-blue-400 hover:underline"
-        >
-          Refine All
-        </a>
+        <SyncLimitButton />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

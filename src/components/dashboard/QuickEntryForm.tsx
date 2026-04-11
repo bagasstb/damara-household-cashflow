@@ -148,6 +148,7 @@ export default function QuickEntryForm({ activeCycleId }: QuickEntryFormProps) {
               type="date"
               required
               value={selectedDate}
+              max={todayStr}
               onChange={(e) => setSelectedDate(e.target.value)}
               onClick={(e) => (e.target as HTMLInputElement).showPicker()}
               disabled={isPending}

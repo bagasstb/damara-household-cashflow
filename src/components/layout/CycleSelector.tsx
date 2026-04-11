@@ -25,12 +25,7 @@ export default function CycleSelector({ cycles, activeCycleId }: CycleSelectorPr
 
   if (cycles.length <= 1) {
     // If there's only 1 cycle, no need for a dropdown
-    const active = cycles[0];
-    return active ? (
-      <p className="text-[10px] text-secondary dark:text-slate-400 font-bold uppercase tracking-[0.2em] mt-1">
-        {new Date(active.start_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })} — {new Date(active.end_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric'})}
-      </p>
-    ) : null;
+    return null;
   }
 
   return (
@@ -42,7 +37,7 @@ export default function CycleSelector({ cycles, activeCycleId }: CycleSelectorPr
       >
         {cycles.map((c) => (
           <option key={c.id} value={c.id} className="text-slate-900 dark:text-slate-900 tracking-normal">
-            {new Date(c.start_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })} — {new Date(c.end_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric'})}
+            {c.name}
           </option>
         ))}
       </select>
