@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LayoutDashboard, History, Plus, PieChart, Receipt } from "lucide-react";
+import { LayoutDashboard, History, Plus, PiggyBank, Receipt } from "lucide-react";
 
 export default function MobileNav() {
   const scrollTo = (e: React.MouseEvent, id: string) => {
@@ -47,16 +47,16 @@ export default function MobileNav() {
         </button>
       </div>
 
-      <button
-        onClick={(e) => scrollTo(e, "analytics-section")}
-        id="mobile-nav-budgets"
+      <Link
+        href="/saving"
+        id="mobile-nav-saving"
         className="flex flex-col items-center gap-1 text-secondary dark:text-slate-400 min-w-[48px] min-h-[48px] justify-center transition-transform active:scale-90"
       >
-        <PieChart className="w-6 h-6" />
+        <PiggyBank className="w-6 h-6" />
         <span className="text-[9px] font-black uppercase tracking-tighter">
-          Stats
+          Saving
         </span>
-      </button>
+      </Link>
       <button
         onClick={(e) => scrollTo(e, "reimburse-section")}
         id="mobile-nav-profile"
