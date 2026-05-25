@@ -73,6 +73,15 @@ function parseAmount(raw: string): number {
   return parseInt(raw.replace(/[^\d]/g, ""), 10) || 0;
 }
 
+// Parse signed amount from a sheet cell — preserves negative sign.
+// e.g. "-104,000" → -104000, "1,234,567" → 1234567
+function parseSignedAmount(raw: string): number {
+  const trimmed = raw.trim().replace(/"/g, "");
+  const isNegative = trimmed.startsWith("-");
+  const digits = parseInt(trimmed.replace(/[^\d]/g, ""), 10) || 0;
+  return isNegative ? -digits : digits;
+}
+
 // Parse date: "1/23/2026" → "2026-01-23"
 function parseDate(raw: string): string | null {
   const trimmed = raw.trim();
@@ -275,14 +284,16 @@ export async function syncBudgetLimitsFromSheet() {
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) throw new Error(`Fetch failed ${res.status}`);
         let text = await res.text();
-        const parsedAmount = parseAmount(text);
-        if (parsedAmount > 0) {
-          toUpdate.push({
-            cycle_id: sheet.cycleId,
-            category_id: categoryId,
-            limit_amount: parsedAmount,
-          });
-        }
+        // Use signed parse so negative sheet values (e.g. overflow from Jajan)
+        // are correctly treated as 0 instead of flipped to a positive limit.
+        const parsedAmount = parseSignedAmount(text);
+        // Always push an update — even 0 or negative becomes limit 0
+        // so the budget card correctly reflects "no available budget".
+        toUpdate.push({
+          cycle_id: sheet.cycleId,
+          category_id: categoryId,
+          limit_amount: Math.max(0, parsedAmount),
+        });
       } catch (e: unknown) {
         errors.push(`[${sheet.name}] Failed to fetch cell ${cell}: ${e instanceof Error ? e.message : String(e)}`);
       }
