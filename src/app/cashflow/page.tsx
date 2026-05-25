@@ -6,6 +6,15 @@ import CashflowAllTransactions from "@/components/cashflow/CashflowAllTransactio
 import CycleSelectorDropdown from "@/components/cashflow/CycleSelectorDropdown";
 import ImportFromSheetButton from "@/components/cashflow/ImportFromSheetButton";
 
+// Cycle IDs that have a corresponding Google Sheet tab and can be synced
+const SYNCABLE_CYCLE_IDS = new Set([
+  "adf25554-3000-45d2-b4c7-32af8ac7d4d1", // Januari
+  "c53e05a8-27b2-4d56-a070-664dc2d88701", // Februari
+  "23bbf648-9c4c-4c6e-821f-cd9f5eac5d21", // Maret
+  "cbe90e1c-a803-4693-be84-e1d7cee2948f", // April
+  "ba4003dc-79ec-4e44-8978-3fade9551ed2", // Mei
+]);
+
 export const metadata: Metadata = {
   title: "Riwayat Cashflow — Household Cashflow",
   description: "Lihat semua riwayat transaksi kasflow per siklus.",
@@ -25,6 +34,8 @@ export default async function CashflowPage({
   ]);
 
   const { cycle, transactions } = dashboardData;
+
+  const canSync = cycle ? SYNCABLE_CYCLE_IDS.has(cycle.id) : false;
 
   return (
     <div className="min-h-screen text-slate-900 dark:text-slate-50 flex flex-col selection:bg-primary/20">
@@ -61,18 +72,20 @@ export default async function CashflowPage({
       </header>
 
       <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-8 pb-24 md:pb-8 space-y-6">
-        {/* Import from Google Sheet */}
-        <div className="bg-white dark:bg-dark-surface rounded-[2rem] border border-slate-100 dark:border-white/5 p-5 shadow-sm">
-          <div className="flex items-start justify-between gap-4 flex-wrap">
-            <div>
-              <h2 className="text-sm font-black tracking-tight">Import dari Google Sheet</h2>
-              <p className="text-[11px] text-secondary dark:text-slate-400 font-bold mt-0.5">
-                Sync data baru dari sheet Januari – April. Duplikat otomatis dilewati.
-              </p>
+        {/* Import from Google Sheet — only for syncable cycles */}
+        {canSync && (
+          <div className="bg-white dark:bg-dark-surface rounded-[2rem] border border-slate-100 dark:border-white/5 p-5 shadow-sm">
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div>
+                <h2 className="text-sm font-black tracking-tight">Import dari Google Sheet</h2>
+                <p className="text-[11px] text-secondary dark:text-slate-400 font-bold mt-0.5">
+                  Sync data baru dari sheet Januari – April. Duplikat otomatis dilewati.
+                </p>
+              </div>
+              <ImportFromSheetButton />
             </div>
-            <ImportFromSheetButton />
           </div>
-        </div>
+        )}
 
         {/* Transaction List */}
         <CashflowAllTransactions transactions={transactions} />

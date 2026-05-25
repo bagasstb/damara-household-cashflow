@@ -42,6 +42,13 @@ const SHEETS = [
     startDate: "2026-03-25",
     endDate: "2026-04-24",
   },
+  {
+    name: "Mei",
+    gid: "1745037782",
+    cycleId: "ba4003dc-79ec-4e44-8978-3fade9551ed2",
+    startDate: "2026-04-25",
+    endDate: "2026-05-24",
+  },
 ];
 
 // Channel normalizer
