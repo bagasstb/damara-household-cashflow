@@ -20,6 +20,7 @@ export default function ImportFromSheetButton() {
     } catch (e) {
       setResult({
         imported: 0,
+        updated: 0,
         skipped: 0,
         errors: [e instanceof Error ? e.message : "Unknown error"],
         sheetResults: [],
@@ -56,7 +57,7 @@ export default function ImportFromSheetButton() {
         {status === "loading"
           ? "Importing..."
           : status === "success"
-          ? `✅ ${result?.imported} imported`
+          ? `✅ ${result?.imported} imported, ${result?.updated} updated`
           : status === "error"
           ? "Import failed"
           : "Import from Google Sheet"}
@@ -77,6 +78,13 @@ export default function ImportFromSheetButton() {
               <span className="font-black text-emerald-600 dark:text-emerald-400">{result.imported}</span>
               <span className="text-secondary dark:text-slate-400 font-bold">new</span>
             </div>
+            {result.updated > 0 && (
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-blue-400" />
+                <span className="font-black text-blue-600 dark:text-blue-400">{result.updated}</span>
+                <span className="text-secondary dark:text-slate-400 font-bold">updated</span>
+              </div>
+            )}
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600" />
               <span className="font-black text-slate-500 dark:text-slate-400">{result.skipped}</span>
@@ -97,6 +105,9 @@ export default function ImportFromSheetButton() {
                 <span key={s.sheet} className="text-[10px] font-black uppercase tracking-wide">
                   <span className="text-slate-400 dark:text-slate-500">{s.sheet}:</span>{" "}
                   <span className="text-emerald-600 dark:text-emerald-400">+{s.imported}</span>
+                  {s.updated > 0 && (
+                    <span className="text-blue-500 dark:text-blue-400 ml-1">↻{s.updated}</span>
+                  )}
                 </span>
               ))}
             </div>

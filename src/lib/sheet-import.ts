@@ -49,6 +49,13 @@ const SHEETS = [
     startDate: "2026-04-25",
     endDate: "2026-05-24",
   },
+  {
+    name: "Juni",
+    gid: "1084811949",
+    cycleId: "d55ad3d8-d395-432b-b265-d622fd5bbd2b",
+    startDate: "2026-05-25",
+    endDate: "2026-06-24",
+  },
 ];
 
 // Channel normalizer
@@ -128,9 +135,10 @@ function parseCSV(text: string): string[][] {
 
 export interface ImportResult {
   imported: number;
+  updated: number;
   skipped: number;
   errors: string[];
-  sheetResults: { sheet: string; imported: number; skipped: number }[];
+  sheetResults: { sheet: string; imported: number; updated: number; skipped: number }[];
 }
 
 export async function importFromGoogleSheet(): Promise<ImportResult> {
@@ -145,6 +153,7 @@ export async function importFromGoogleSheet(): Promise<ImportResult> {
 
   const result: ImportResult = {
     imported: 0,
+    updated: 0,
     skipped: 0,
     errors: [],
     sheetResults: [],
@@ -152,19 +161,23 @@ export async function importFromGoogleSheet(): Promise<ImportResult> {
 
   for (const sheet of SHEETS) {
     let sheetImported = 0;
+    let sheetUpdated = 0;
     let sheetSkipped = 0;
 
     try {
-      // Fetch existing transactions for this cycle (for dedup)
+      // Fetch existing transactions for this cycle — include id & category_id for update detection
       const { data: existing } = await supabase
         .from("transactions")
-        .select("date, description, amount")
+        .select("id, date, description, amount, category_id")
         .eq("cycle_id", sheet.cycleId);
 
-      const existingSet = new Set(
-        (existing ?? []).map(
-          (t) => `${t.date.split("T")[0]}|${t.description.trim().toLowerCase()}|${t.amount}`
-        )
+      // Map: dedupKey → { id, category_id, amount } — key is date|description (without amount)
+      // so we can detect amount changes without creating duplicate inserts
+      const existingMap = new Map<string, { id: string; category_id: string; amount: number }>(
+        (existing ?? []).map((t) => [
+          `${t.date.split("T")[0]}|${t.description.trim().toLowerCase()}`,
+          { id: t.id, category_id: t.category_id, amount: t.amount },
+        ])
       );
 
       // Fetch and parse sheet rows
@@ -172,6 +185,7 @@ export async function importFromGoogleSheet(): Promise<ImportResult> {
 
       let currentDate: string | null = null;
       const toInsert: object[] = [];
+      const toUpdate: { id: string; category_id?: string; amount?: number }[] = [];
 
       for (const cols of rows) {
         // Date is column B (index 1), Description C (2), Channel D (3), Category E (4), CostType F (5), Amount G (6), Reimburse H (7)
@@ -198,18 +212,32 @@ export async function importFromGoogleSheet(): Promise<ImportResult> {
         // Skip if date is outside this cycle's range
         if (currentDate < sheet.startDate || currentDate > sheet.endDate) continue;
 
-        // Skip if already in DB (dedup)
-        const dedupKey = `${currentDate}|${description.toLowerCase()}|${amount}`;
-        if (existingSet.has(dedupKey)) {
-          sheetSkipped++;
-          continue;
-        }
-
         // Map category
         const categoryId = categoryMap[categoryRaw.toLowerCase().trim()];
         if (!categoryId) {
           result.errors.push(`[${sheet.name}] Unknown category: "${categoryRaw}" (${description})`);
           sheetSkipped++;
+          continue;
+        }
+
+        const dedupKey = `${currentDate}|${description.toLowerCase()}`;
+        const existingTx = existingMap.get(dedupKey);
+
+        if (existingTx) {
+          // Transaction already exists — check if category or amount changed
+          const categoryChanged = existingTx.category_id !== categoryId;
+          const amountChanged = existingTx.amount !== amount;
+
+          if (categoryChanged || amountChanged) {
+            const updatePayload: { id: string; category_id?: string; amount?: number } = { id: existingTx.id };
+            if (categoryChanged) updatePayload.category_id = categoryId;
+            if (amountChanged) updatePayload.amount = amount;
+            toUpdate.push(updatePayload);
+            // Update map so within-batch duplicates are also handled
+            existingMap.set(dedupKey, { ...existingTx, category_id: categoryId, amount });
+          } else {
+            sheetSkipped++;
+          }
           continue;
         }
 
@@ -229,10 +257,11 @@ export async function importFromGoogleSheet(): Promise<ImportResult> {
           is_transferred: false,
         });
 
-        existingSet.add(dedupKey); // prevent re-insert within same batch
+        // Add to map to prevent re-insert within same batch
+        existingMap.set(dedupKey, { id: "pending", category_id: categoryId, amount });
       }
 
-      // Bulk insert
+      // Bulk insert new transactions
       if (toInsert.length > 0) {
         const { error } = await supabase.from("transactions").insert(toInsert);
         if (error) {
@@ -241,12 +270,30 @@ export async function importFromGoogleSheet(): Promise<ImportResult> {
           sheetImported = toInsert.length;
         }
       }
+
+      // Update category/amount for changed transactions
+      for (const { id, category_id, amount } of toUpdate) {
+        const updatePayload: Record<string, unknown> = {};
+        if (category_id !== undefined) updatePayload.category_id = category_id;
+        if (amount !== undefined) updatePayload.amount = amount;
+
+        const { error } = await supabase
+          .from("transactions")
+          .update(updatePayload)
+          .eq("id", id);
+        if (error) {
+          result.errors.push(`[${sheet.name}] Update error (id=${id}): ${error.message}`);
+        } else {
+          sheetUpdated++;
+        }
+      }
     } catch (e: unknown) {
       result.errors.push(`[${sheet.name}] ${e instanceof Error ? e.message : String(e)}`);
     }
 
-    result.sheetResults.push({ sheet: sheet.name, imported: sheetImported, skipped: sheetSkipped });
+    result.sheetResults.push({ sheet: sheet.name, imported: sheetImported, updated: sheetUpdated, skipped: sheetSkipped });
     result.imported += sheetImported;
+    result.updated += sheetUpdated;
     result.skipped += sheetSkipped;
   }
 

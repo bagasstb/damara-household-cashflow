@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { LayoutDashboard, History, Plus, PiggyBank, Receipt } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { LayoutDashboard, History, Plus, PiggyBank, BarChart3 } from "lucide-react";
 
 export default function MobileNav() {
+  const pathname = usePathname();
+
   const scrollTo = (e: React.MouseEvent, id: string) => {
     e.preventDefault();
     const el = document.getElementById(id);
@@ -18,7 +21,9 @@ export default function MobileNav() {
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         id="mobile-nav-home"
-        className="flex flex-col items-center gap-1 text-primary min-w-[48px] min-h-[48px] justify-center transition-transform active:scale-90"
+        className={`flex flex-col items-center gap-1 min-w-[48px] min-h-[48px] justify-center transition-transform active:scale-90 ${
+          pathname === "/" ? "text-primary" : "text-secondary dark:text-slate-400"
+        }`}
       >
         <LayoutDashboard className="w-6 h-6" />
         <span className="text-[9px] font-black uppercase tracking-tighter">
@@ -29,7 +34,9 @@ export default function MobileNav() {
       <Link
         href="/cashflow"
         id="mobile-nav-history"
-        className="flex flex-col items-center gap-1 text-secondary dark:text-slate-400 min-w-[48px] min-h-[48px] justify-center transition-transform active:scale-90"
+        className={`flex flex-col items-center gap-1 min-w-[48px] min-h-[48px] justify-center transition-transform active:scale-90 ${
+          pathname === "/cashflow" ? "text-primary" : "text-secondary dark:text-slate-400"
+        }`}
       >
         <History className="w-6 h-6" />
         <span className="text-[9px] font-black uppercase tracking-tighter">
@@ -50,23 +57,28 @@ export default function MobileNav() {
       <Link
         href="/saving"
         id="mobile-nav-saving"
-        className="flex flex-col items-center gap-1 text-secondary dark:text-slate-400 min-w-[48px] min-h-[48px] justify-center transition-transform active:scale-90"
+        className={`flex flex-col items-center gap-1 min-w-[48px] min-h-[48px] justify-center transition-transform active:scale-90 ${
+          pathname === "/saving" ? "text-primary" : "text-secondary dark:text-slate-400"
+        }`}
       >
         <PiggyBank className="w-6 h-6" />
         <span className="text-[9px] font-black uppercase tracking-tighter">
           Saving
         </span>
       </Link>
-      <button
-        onClick={(e) => scrollTo(e, "reimburse-section")}
-        id="mobile-nav-profile"
-        className="flex flex-col items-center gap-1 text-secondary dark:text-slate-400 min-w-[48px] min-h-[48px] justify-center transition-transform active:scale-90"
+
+      <Link
+        href="/analisis"
+        id="mobile-nav-analisis"
+        className={`flex flex-col items-center gap-1 min-w-[48px] min-h-[48px] justify-center transition-transform active:scale-90 ${
+          pathname === "/analisis" ? "text-primary" : "text-secondary dark:text-slate-400"
+        }`}
       >
-        <Receipt className="w-6 h-6" />
+        <BarChart3 className="w-6 h-6" />
         <span className="text-[9px] font-black uppercase tracking-tighter">
-          Reimburse
+          Analisis
         </span>
-      </button>
+      </Link>
     </nav>
   );
 }

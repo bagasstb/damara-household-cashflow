@@ -13,6 +13,7 @@ const SYNCABLE_CYCLE_IDS = new Set([
   "23bbf648-9c4c-4c6e-821f-cd9f5eac5d21", // Maret
   "cbe90e1c-a803-4693-be84-e1d7cee2948f", // April
   "ba4003dc-79ec-4e44-8978-3fade9551ed2", // Mei
+  "d55ad3d8-d395-432b-b265-d622fd5bbd2b", // Juni
 ]);
 
 export const metadata: Metadata = {
