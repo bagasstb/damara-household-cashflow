@@ -258,7 +258,10 @@ export async function importFromGoogleSheet(): Promise<ImportResult> {
           continue;
         }
 
-        const isReimbursable = reimburseRaw.toLowerCase() === "y" || reimburseRaw.toLowerCase() === "yes";
+        // Any non-empty value in column H = reimbursable
+        // "Transfered" / "Transferred" = already settled
+        const isReimbursable = reimburseRaw !== "";
+        const isTransferred = reimburseRaw.toLowerCase().startsWith("transfer");
         const channel = normalizeChannel(channelRaw);
         const costType = costTypeRaw.toLowerCase().trim();
 
@@ -278,7 +281,7 @@ export async function importFromGoogleSheet(): Promise<ImportResult> {
           channel,
           cost_type: costType,
           is_reimbursable: isReimbursable,
-          is_transferred: false,
+          is_transferred: isTransferred,
         });
 
         // Add to map to prevent re-insert within same batch
