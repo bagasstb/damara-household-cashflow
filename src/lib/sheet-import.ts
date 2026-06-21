@@ -182,18 +182,17 @@ export async function importFromGoogleSheet(): Promise<ImportResult> {
     let sheetSkipped = 0;
 
     try {
-      // Fetch existing transactions for this cycle — include id & category_id for update detection
+      // Fetch existing transactions for this cycle — include all fields for update detection
       const { data: existing } = await supabase
         .from("transactions")
-        .select("id, date, description, amount, category_id")
+        .select("id, date, description, amount, category_id, is_reimbursable, is_transferred")
         .eq("cycle_id", sheet.cycleId);
 
-      // Map: dedupKey → { id, category_id, amount } — key is date|description (without amount)
-      // so we can detect amount changes without creating duplicate inserts
-      const existingMap = new Map<string, { id: string; category_id: string; amount: number }>(
+      // Map: dedupKey → { id, category_id, amount, is_reimbursable, is_transferred }
+      const existingMap = new Map<string, { id: string; category_id: string; amount: number; is_reimbursable: boolean; is_transferred: boolean }>(
         (existing ?? []).map((t) => [
           `${t.date.split("T")[0]}|${t.description.trim().toLowerCase()}`,
-          { id: t.id, category_id: t.category_id, amount: t.amount },
+          { id: t.id, category_id: t.category_id, amount: t.amount, is_reimbursable: t.is_reimbursable, is_transferred: t.is_transferred },
         ])
       );
 
@@ -202,7 +201,7 @@ export async function importFromGoogleSheet(): Promise<ImportResult> {
 
       let currentDate: string | null = null;
       const toInsert: object[] = [];
-      const toUpdate: { id: string; category_id?: string; amount?: number }[] = [];
+      const toUpdate: { id: string; category_id?: string; amount?: number; is_reimbursable?: boolean; is_transferred?: boolean }[] = [];
 
       for (const cols of rows) {
         // Date is column B (index 1), Description C (2), Channel D (3), Category E (4), CostType F (5), Amount G (6), Reimburse H (7)
@@ -237,31 +236,36 @@ export async function importFromGoogleSheet(): Promise<ImportResult> {
           continue;
         }
 
+        // Recognized reimbursable markers in column H
+        // "Transfered"/"Transferred" = already settled, rest = pending reimbursable
+        const reimburseVal = reimburseRaw.toLowerCase();
+        const isReimbursable = ["y", "yes", "v", "reimburse", "reimbursable"].includes(reimburseVal)
+          || reimburseVal.startsWith("transfer");
+        const isTransferred = reimburseVal.startsWith("transfer");
+
         const dedupKey = `${currentDate}|${description.toLowerCase()}`;
         const existingTx = existingMap.get(dedupKey);
 
         if (existingTx) {
-          // Transaction already exists — check if category or amount changed
+          // Transaction already exists — check if anything changed
           const categoryChanged = existingTx.category_id !== categoryId;
           const amountChanged = existingTx.amount !== amount;
+          const reimbursableChanged = existingTx.is_reimbursable !== isReimbursable;
+          const transferredChanged = existingTx.is_transferred !== isTransferred;
 
-          if (categoryChanged || amountChanged) {
-            const updatePayload: { id: string; category_id?: string; amount?: number } = { id: existingTx.id };
+          if (categoryChanged || amountChanged || reimbursableChanged || transferredChanged) {
+            const updatePayload: { id: string; category_id?: string; amount?: number; is_reimbursable?: boolean; is_transferred?: boolean } = { id: existingTx.id };
             if (categoryChanged) updatePayload.category_id = categoryId;
             if (amountChanged) updatePayload.amount = amount;
+            if (reimbursableChanged) updatePayload.is_reimbursable = isReimbursable;
+            if (transferredChanged) updatePayload.is_transferred = isTransferred;
             toUpdate.push(updatePayload);
-            // Update map so within-batch duplicates are also handled
-            existingMap.set(dedupKey, { ...existingTx, category_id: categoryId, amount });
+            existingMap.set(dedupKey, { ...existingTx, category_id: categoryId, amount, is_reimbursable: isReimbursable, is_transferred: isTransferred });
           } else {
             sheetSkipped++;
           }
           continue;
         }
-
-        // Any non-empty value in column H = reimbursable
-        // "Transfered" / "Transferred" = already settled
-        const isReimbursable = reimburseRaw !== "";
-        const isTransferred = reimburseRaw.toLowerCase().startsWith("transfer");
         const channel = normalizeChannel(channelRaw);
         const costType = costTypeRaw.toLowerCase().trim();
 
@@ -298,11 +302,13 @@ export async function importFromGoogleSheet(): Promise<ImportResult> {
         }
       }
 
-      // Update category/amount for changed transactions
-      for (const { id, category_id, amount } of toUpdate) {
+      // Update changed fields for existing transactions
+      for (const { id, category_id, amount, is_reimbursable, is_transferred } of toUpdate) {
         const updatePayload: Record<string, unknown> = {};
         if (category_id !== undefined) updatePayload.category_id = category_id;
         if (amount !== undefined) updatePayload.amount = amount;
+        if (is_reimbursable !== undefined) updatePayload.is_reimbursable = is_reimbursable;
+        if (is_transferred !== undefined) updatePayload.is_transferred = is_transferred;
 
         const { error } = await supabase
           .from("transactions")
