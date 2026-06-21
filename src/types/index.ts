@@ -48,7 +48,8 @@ export interface Transaction {
     | "tabungan anak"
     | "tabungan couple"
     | "tabungan"
-    | "household maintenance";
+    | "household maintenance"
+    | "bonus bagas";
   is_reimbursable: boolean;
   is_transferred: boolean;
   created_at: string;

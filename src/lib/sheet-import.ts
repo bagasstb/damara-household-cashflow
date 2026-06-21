@@ -58,7 +58,24 @@ const SHEETS = [
   },
 ];
 
-// Channel normalizer
+// Allowed cost_type values — must match the DB CHECK constraint
+const ALLOWED_COST_TYPES = new Set([
+  "fixed",
+  "variable",
+  "fixed cost",
+  "expense cost",
+  "urgent cost",
+  "gift (family)",
+  "gift (others)",
+  "tabungan rumah",
+  "tabungan anak",
+  "tabungan couple",
+  "tabungan",
+  "household maintenance",
+  "bonus bagas",
+]);
+
+
 function normalizeChannel(raw: string): string {
   const map: Record<string, string> = {
     "e-money": "e-money",
@@ -244,6 +261,13 @@ export async function importFromGoogleSheet(): Promise<ImportResult> {
         const isReimbursable = reimburseRaw.toLowerCase() === "y" || reimburseRaw.toLowerCase() === "yes";
         const channel = normalizeChannel(channelRaw);
         const costType = costTypeRaw.toLowerCase().trim();
+
+        // Validate cost_type against DB CHECK constraint
+        if (!ALLOWED_COST_TYPES.has(costType)) {
+          result.errors.push(`[${sheet.name}] Unknown cost_type: "${costTypeRaw}" (${description}) — skipped. Add it to the DB constraint to import.`);
+          sheetSkipped++;
+          continue;
+        }
 
         toInsert.push({
           cycle_id: sheet.cycleId,
