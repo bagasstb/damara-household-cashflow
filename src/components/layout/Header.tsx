@@ -6,6 +6,7 @@ import { Wallet, Sun, Moon, History, PiggyBank, BarChart3 } from "lucide-react";
 import { useTheme } from "@/app/providers";
 import CycleSelector from "./CycleSelector";
 import NewCycleButton from "./NewCycleButton";
+import SheetSyncButton from "./SheetSyncButton";
 import type { Cycle } from "@/types";
 
 const NAV_LINKS = [
@@ -63,7 +64,8 @@ export default function Header({ cycles = [], activeCycle }: HeaderProps) {
 
         <div className="flex items-center gap-3">
           {/* New Cycle button */}
-          <NewCycleButton />
+          <NewCycleButton cycles={cycles as any} />
+          <SheetSyncButton />
 
           <button
             onClick={toggleTheme}

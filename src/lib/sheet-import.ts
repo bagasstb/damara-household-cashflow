@@ -56,6 +56,13 @@ const SHEETS = [
     startDate: "2026-05-25",
     endDate: "2026-06-24",
   },
+  {
+    name: "Juli",
+    gid: "1132619206",
+    cycleId: "5ca99fd1-2c26-454f-99de-5aea19d5c756",
+    startDate: "2026-06-25",
+    endDate: "2026-07-24",
+  },
 ];
 
 // Allowed cost_type values — must match the DB CHECK constraint
@@ -345,7 +352,7 @@ export async function syncBudgetLimitsFromSheet() {
     "jajan dean": "T6",
     "transport dean": "T11",
     "jajan bagas": "O6",
-    "transport bagas": "O8",
+    "transport bagas": "P6",
     "laundry": "O11",
   };
 
