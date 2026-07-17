@@ -296,7 +296,7 @@ export async function importFromGoogleSheet(): Promise<ImportResult> {
         });
 
         // Add to map to prevent re-insert within same batch
-        existingMap.set(dedupKey, { id: "pending", category_id: categoryId, amount });
+        existingMap.set(dedupKey, { id: "pending", category_id: categoryId, amount, is_reimbursable: isReimbursable, is_transferred: isTransferred });
       }
 
       // Bulk insert new transactions
