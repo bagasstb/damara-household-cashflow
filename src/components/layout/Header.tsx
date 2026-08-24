@@ -1,19 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Wallet, Sun, Moon, History, PiggyBank, BarChart3 } from "lucide-react";
+import { Wallet, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/app/providers";
 import CycleSelector from "./CycleSelector";
 import NewCycleButton from "./NewCycleButton";
-import SheetSyncButton from "./SheetSyncButton";
 import type { Cycle } from "@/types";
-
-const NAV_LINKS = [
-  { href: "/cashflow", label: "Cashflow", icon: History },
-  { href: "/saving", label: "Saving", icon: PiggyBank },
-  { href: "/analisis", label: "Analisis", icon: BarChart3 },
-];
 
 interface HeaderProps {
   cycles?: Cycle[];
@@ -22,7 +13,6 @@ interface HeaderProps {
 
 export default function Header({ cycles = [], activeCycle }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
-  const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 dark:bg-dark-surface/95 backdrop-blur-md border-b border-slate-200 dark:border-white/10 px-4 md:px-8 py-4">
@@ -41,31 +31,11 @@ export default function Header({ cycles = [], activeCycle }: HeaderProps) {
           </div>
         </div>
 
-        {/* Desktop Nav Links */}
-        <nav className="hidden md:flex items-center gap-1">
-          {NAV_LINKS.map(({ href, label, icon: Icon }) => {
-            const active = pathname === href;
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-black transition-all ${
-                  active
-                    ? "bg-primary/10 dark:bg-primary/20 text-primary"
-                    : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {label}
-              </Link>
-            );
-          })}
-        </nav>
+
 
         <div className="flex items-center gap-3">
           {/* New Cycle button */}
           <NewCycleButton cycles={cycles as any} />
-          <SheetSyncButton />
 
           <button
             onClick={toggleTheme}
@@ -78,22 +48,6 @@ export default function Header({ cycles = [], activeCycle }: HeaderProps) {
               <Moon className="w-5 h-5" />
             )}
           </button>
-
-          <div className="hidden md:flex items-center gap-3 pl-2">
-            <div className="text-right">
-              <span className="text-sm font-black block leading-none">
-                Bagas & Dean
-              </span>
-              <span className="text-[10px] text-emerald-500 font-bold uppercase tracking-wider">
-                Active Cycle
-              </span>
-            </div>
-            <img
-              src="https://api.dicebear.com/7.x/avataaars/svg?seed=Bagas"
-              className="w-10 h-10 rounded-2xl border-2 border-slate-200 dark:border-white/10 bg-slate-50"
-              alt="Profile"
-            />
-          </div>
         </div>
       </div>
     </header>
