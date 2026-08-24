@@ -244,7 +244,7 @@ export default function GoalCard({ goal, isChild = false, onEdit }: GoalCardProp
                     0
                   </span>
                 )}
-                <Pencil className="w-3 h-3 text-slate-300 dark:text-slate-600 mt-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Pencil className="w-3 h-3 text-slate-400 dark:text-slate-500 mt-1" />
               </button>
             );
           })}
