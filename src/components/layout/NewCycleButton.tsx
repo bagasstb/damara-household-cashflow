@@ -9,11 +9,8 @@ import { createCycle } from "@/lib/actions";
 const MONTHS_ID = ["JAN","FEB","MAR","APR","MEI","JUN","JUL","AGU","SEP","OKT","NOV","DES"];
 const MONTHS_LONG = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 
-function generateCycleName(start: string, end: string): string {
-  if (!start || !end) return "";
-  const [, sm, sd] = start.split("-").map(Number);
-  const [ey, em, ed] = end.split("-").map(Number);
-  return `${sd} ${MONTHS_ID[sm - 1]} – ${ed} ${MONTHS_ID[em - 1]} ${ey}`;
+function generateCycleName(month: number, year: number): string {
+  return `${MONTHS_LONG[month - 1].toUpperCase()} ${year}`;
 }
 
 /** Returns "YYYY-MM" strings for months that already have a cycle */
@@ -89,7 +86,7 @@ function NewCycleModal({ onClose, cycles }: NewCycleModalProps) {
 
     const start = fmt(startDate);
     const end = fmt(endDate);
-    return { start, end, name: generateCycleName(start, end) };
+    return { start, end, name: generateCycleName(month, year) };
   }
 
   const preview = selected ? getDates(selected.year, selected.month) : null;
