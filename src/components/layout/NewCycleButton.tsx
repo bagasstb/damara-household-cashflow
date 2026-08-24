@@ -52,6 +52,7 @@ function NewCycleModal({ onClose, cycles }: NewCycleModalProps) {
   const [isPending, startTransition] = useTransition();
   const [success, setSuccess] = useState(false);
   const [selected, setSelected] = useState<{ year: number; month: number } | null>(null);
+  const [gid, setGid] = useState("");
   const [confirming, setConfirming] = useState(false);
   const router = useRouter();
 
@@ -100,6 +101,7 @@ function NewCycleModal({ onClose, cycles }: NewCycleModalProps) {
           start_date: preview.start,
           end_date: preview.end,
           savings_target: 0,
+          gid: gid.trim() || undefined,
         });
         setSuccess(true);
         setTimeout(() => {
@@ -202,6 +204,25 @@ function NewCycleModal({ onClose, cycles }: NewCycleModalProps) {
                 </div>
               )}
 
+              {/* GID Input */}
+              {selected && (
+                <div className="mt-3 space-y-1">
+                  <label className="block text-[10px] font-black uppercase text-secondary/60 dark:text-slate-400 tracking-wider">
+                    Google Sheet Tab GID (Opsional)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Contoh: 1132619206"
+                    value={gid}
+                    onChange={(e) => setGid(e.target.value)}
+                    className="w-full h-11 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                  />
+                  <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                    Didapat dari URL tab Google Sheet (contoh: <span className="font-mono font-bold">...&gid=1132619206</span>)
+                  </p>
+                </div>
+              )}
+
               {/* Budget copy notice */}
               {selected && (
                 <div className="mt-3 flex items-start gap-2.5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-2xl px-4 py-3">
@@ -240,6 +261,12 @@ function NewCycleModal({ onClose, cycles }: NewCycleModalProps) {
                       <p className="text-xs font-black text-slate-700 dark:text-slate-200">{preview?.end}</p>
                     </div>
                   </div>
+                  {gid && (
+                    <div className="pt-2 border-t border-slate-200 dark:border-white/10">
+                      <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-0.5">Google Sheet GID</p>
+                      <p className="text-xs font-mono font-black text-slate-700 dark:text-slate-200">{gid}</p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-start gap-2.5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-2xl px-4 py-3">

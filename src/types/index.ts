@@ -6,6 +6,7 @@ export interface Cycle {
   start_date: string;
   end_date: string;
   savings_target: number;
+  gid?: string | null;
   created_at: string;
 }
 

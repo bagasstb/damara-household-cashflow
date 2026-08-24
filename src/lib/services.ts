@@ -149,7 +149,7 @@ export async function getAllCycles() {
   const supabase = await createClient();
   const { data: cycles } = await supabase
     .from("cycles")
-    .select("id, name, start_date, end_date")
+    .select("id, name, start_date, end_date, gid")
     .order("start_date", { ascending: false });
 
   return cycles || [];

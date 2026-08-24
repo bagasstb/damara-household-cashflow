@@ -93,20 +93,27 @@ export interface CreateCycleInput {
   start_date: string;
   end_date: string;
   savings_target: number;
+  gid?: string;
 }
 
 export async function createCycle(input: CreateCycleInput): Promise<{ cycleId: string }> {
   const supabase = await createClient();
 
+  const cyclePayload: Record<string, any> = {
+    name: input.name,
+    start_date: input.start_date,
+    end_date: input.end_date,
+    savings_target: input.savings_target,
+  };
+
+  if (input.gid) {
+    cyclePayload.gid = input.gid.trim();
+  }
+
   // 1. Create the new cycle
   const { data: newCycle, error: cycleError } = await supabase
     .from("cycles")
-    .insert({
-      name: input.name,
-      start_date: input.start_date,
-      end_date: input.end_date,
-      savings_target: input.savings_target,
-    })
+    .insert(cyclePayload)
     .select("id")
     .single();
 

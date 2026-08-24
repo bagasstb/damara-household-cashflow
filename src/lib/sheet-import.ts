@@ -12,8 +12,16 @@ function getSupabase() {
   );
 }
 
-// Sheet tab GID → cycle mapping
-const SHEETS = [
+// Sheet tab GID → cycle mapping (fallback / legacy)
+export interface SheetConfig {
+  name: string;
+  gid: string;
+  cycleId: string;
+  startDate: string;
+  endDate: string;
+}
+
+const SHEETS: SheetConfig[] = [
   {
     name: "Januari",
     gid: "785117583",
@@ -64,6 +72,34 @@ const SHEETS = [
     endDate: "2026-07-24",
   },
 ];
+
+export async function getSheetsList(): Promise<SheetConfig[]> {
+  const supabase = getSupabase();
+  const { data: dbCycles } = await supabase
+    .from("cycles")
+    .select("id, name, gid, start_date, end_date");
+
+  const map = new Map<string, SheetConfig>();
+  // 1. Seed with static sheets
+  for (const s of SHEETS) {
+    map.set(s.cycleId, s);
+  }
+  // 2. Add or override from database if cycle has gid
+  if (dbCycles) {
+    for (const c of dbCycles) {
+      if (c.gid) {
+        map.set(c.id, {
+          name: c.name,
+          gid: c.gid,
+          cycleId: c.id,
+          startDate: c.start_date,
+          endDate: c.end_date,
+        });
+      }
+    }
+  }
+  return Array.from(map.values());
+}
 
 // Allowed cost_type values — must match the DB CHECK constraint
 const ALLOWED_COST_TYPES = new Set([
@@ -183,7 +219,9 @@ export async function importFromGoogleSheet(): Promise<ImportResult> {
     sheetResults: [],
   };
 
-  for (const sheet of SHEETS) {
+  const activeSheets = await getSheetsList();
+
+  for (const sheet of activeSheets) {
     let sheetImported = 0;
     let sheetUpdated = 0;
     let sheetSkipped = 0;
@@ -359,7 +397,9 @@ export async function syncBudgetLimitsFromSheet() {
   const toUpdate: { cycle_id: string; category_id: string; limit_amount: number }[] = [];
   const errors: string[] = [];
 
-  for (const sheet of SHEETS) {
+  const activeSheets = await getSheetsList();
+
+  for (const sheet of activeSheets) {
     for (const [catName, cell] of Object.entries(targetCategories)) {
       const categoryId = categoryMap[catName];
       if (!categoryId) {

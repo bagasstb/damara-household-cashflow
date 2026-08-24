@@ -6,17 +6,6 @@ import CashflowAllTransactions from "@/components/cashflow/CashflowAllTransactio
 import CycleSelectorDropdown from "@/components/cashflow/CycleSelectorDropdown";
 import ImportFromSheetButton from "@/components/cashflow/ImportFromSheetButton";
 
-// Cycle IDs that have a corresponding Google Sheet tab and can be synced
-const SYNCABLE_CYCLE_IDS = new Set([
-  "adf25554-3000-45d2-b4c7-32af8ac7d4d1", // Januari
-  "c53e05a8-27b2-4d56-a070-664dc2d88701", // Februari
-  "23bbf648-9c4c-4c6e-821f-cd9f5eac5d21", // Maret
-  "cbe90e1c-a803-4693-be84-e1d7cee2948f", // April
-  "ba4003dc-79ec-4e44-8978-3fade9551ed2", // Mei
-  "d55ad3d8-d395-432b-b265-d622fd5bbd2b", // Juni
-  "5ca99fd1-2c26-454f-99de-5aea19d5c756", // Juli
-]);
-
 export const metadata: Metadata = {
   title: "Riwayat Cashflow — Household Cashflow",
   description: "Lihat semua riwayat transaksi kasflow per siklus.",
@@ -37,7 +26,7 @@ export default async function CashflowPage({
 
   const { cycle, transactions } = dashboardData;
 
-  const canSync = cycle ? SYNCABLE_CYCLE_IDS.has(cycle.id) : false;
+  const canSync = Boolean(cycle?.gid);
 
   return (
     <div className="min-h-screen text-slate-900 dark:text-slate-50 flex flex-col selection:bg-primary/20">
