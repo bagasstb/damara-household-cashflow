@@ -1,18 +1,51 @@
-import { Heart } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { Heart, Pencil, X, Check, Loader2 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils/formatCurrency";
-import { IHYA_TOTAL } from "@/types/ihya";
 
 interface IhyaQuotaCardProps {
   totalSpent: number;
 }
 
 export default function IhyaQuotaCard({ totalSpent }: IhyaQuotaCardProps) {
-  const remaining = IHYA_TOTAL - totalSpent;
-  const usedPercent = Math.min(
-    Math.round((totalSpent / IHYA_TOTAL) * 100),
-    100
-  );
-  const isOverBudget = remaining < 0;
+  const [isEditing, setIsEditing] = useState(false);
+  const [total, setTotal] = useState(258_339);
+  const [editValue, setEditValue] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleEdit = () => {
+    setEditValue(new Intl.NumberFormat("id-ID").format(total));
+    setIsEditing(true);
+  };
+
+  const handleSave = () => {
+    const cleanAmount = Number(editValue.replace(/\D/g, ""));
+    if (cleanAmount > 0) {
+      setIsSaving(true);
+      // Simulate save
+      setTimeout(() => {
+        setTotal(cleanAmount);
+        setIsSaving(false);
+        setIsEditing(false);
+      }, 500);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setEditValue("");
+  };
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/\D/g, "");
+    if (!rawValue) {
+      setEditValue("");
+      return;
+    }
+    const formatted = new Intl.NumberFormat("id-ID").format(Number(rawValue));
+    setEditValue(formatted);
+  };
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-500 p-8 rounded-[2.5rem] shadow-xl shadow-blue-500/20">
@@ -37,57 +70,61 @@ export default function IhyaQuotaCard({ totalSpent }: IhyaQuotaCardProps) {
         </div>
 
         {/* Total */}
-        <div className="mb-6">
+        <div>
           <p className="text-white/60 text-[10px] font-black uppercase tracking-widest mb-1">
             Total Tabungan
           </p>
-          <div className="flex items-baseline gap-2">
-            <span className="text-white/70 text-sm font-black">Rp</span>
-            <span className="text-white text-3xl font-black tracking-tighter">
-              {formatCurrency(IHYA_TOTAL)}
-            </span>
-          </div>
-        </div>
-
-        {/* Progress bar */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-white/70 text-[10px] font-black uppercase tracking-widest">
-              Terpakai {usedPercent}%
-            </span>
-            <span className="text-white/70 text-[10px] font-black uppercase tracking-widest">
-              {formatCurrency(totalSpent)} / {formatCurrency(IHYA_TOTAL)}
-            </span>
-          </div>
-          <div className="w-full h-3 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm">
-            <div
-              className={`h-full rounded-full transition-all duration-1000 ease-out ${
-                isOverBudget
-                  ? "bg-red-400"
-                  : usedPercent > 75
-                  ? "bg-amber-300"
-                  : "bg-white"
-              }`}
-              style={{ width: `${Math.min(usedPercent, 100)}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Remaining */}
-        <div className={`p-4 rounded-2xl ${isOverBudget ? "bg-red-500/20" : "bg-white/10"} backdrop-blur-sm`}>
-          <p className="text-white/60 text-[10px] font-black uppercase tracking-widest mb-1">
-            {isOverBudget ? "Melebihi Budget" : "Sisa Tabungan"}
-          </p>
-          <div className="flex items-baseline gap-2">
-            <span className="text-white/70 text-sm font-black">Rp</span>
-            <span
-              className={`text-2xl font-black tracking-tighter ${
-                isOverBudget ? "text-red-200" : "text-white"
-              }`}
-            >
-              {formatCurrency(Math.abs(remaining))}
-            </span>
-          </div>
+          {isEditing ? (
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={editValue}
+                  onChange={handleAmountChange}
+                  autoFocus
+                  className="w-full h-12 bg-white/20 border-2 border-white/30 rounded-xl px-4 text-xl font-mono font-black text-white placeholder:text-white/50 focus:outline-none focus:border-white/60"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSave();
+                    if (e.key === "Escape") handleCancel();
+                  }}
+                />
+              </div>
+              <button
+                onClick={handleSave}
+                disabled={isSaving}
+                className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center text-white transition-colors cursor-pointer disabled:opacity-50"
+              >
+                {isSaving ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Check className="w-5 h-5" />
+                )}
+              </button>
+              <button
+                onClick={handleCancel}
+                disabled={isSaving}
+                className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center text-white transition-colors cursor-pointer disabled:opacity-50"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <div className="flex items-baseline gap-2">
+                <span className="text-white/70 text-sm font-black">Rp</span>
+                <span className="text-white text-3xl font-black tracking-tighter">
+                  {formatCurrency(total)}
+                </span>
+              </div>
+              <button
+                onClick={handleEdit}
+                className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center text-white transition-colors cursor-pointer"
+              >
+                <Pencil className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </section>
