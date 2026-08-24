@@ -1,6 +1,6 @@
 "use client";
 
-import { Wallet, Sun, Moon } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
 import { useTheme } from "@/app/providers";
 import CycleSelector from "./CycleSelector";
 import NewCycleButton from "./NewCycleButton";
@@ -17,18 +17,13 @@ export default function Header({ cycles = [], activeCycle }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 bg-white/95 dark:bg-dark-surface/95 backdrop-blur-md border-b border-slate-200 dark:border-white/10 px-4 md:px-8 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-11 h-11 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/30">
-            <Wallet className="w-6 h-6" />
-          </div>
-          <div>
-            <h1 className="text-xl font-black tracking-tight leading-none">
-              Household Cashflow
-            </h1>
-            {activeCycle && (
-              <CycleSelector cycles={cycles} activeCycleId={activeCycle.id} />
-            )}
-          </div>
+        <div>
+          <h1 className="text-xl font-black tracking-tight leading-none">
+            Household Cashflow
+          </h1>
+          {activeCycle && (
+            <CycleSelector cycles={cycles} activeCycleId={activeCycle.id} />
+          )}
         </div>
 
 
