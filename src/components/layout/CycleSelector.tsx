@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ChevronDown } from "lucide-react";
 
 interface Cycle {
   id: string;
@@ -41,7 +40,6 @@ export default function CycleSelector({ cycles, activeCycleId }: CycleSelectorPr
           </option>
         ))}
       </select>
-      <ChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 text-secondary dark:text-slate-400 pointer-events-none" />
     </div>
   );
 }
