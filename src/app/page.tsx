@@ -12,7 +12,7 @@ import { getThrSpending } from "@/lib/thr-services";
 import { getLatestSavingTotal } from "@/lib/saving-services";
 import { THR_TOTAL } from "@/types/thr";
 import { formatCurrency } from "@/lib/utils/formatCurrency";
-import { Gift, PiggyBank, BarChart3, Heart } from "lucide-react";
+import { Gift, PiggyBank, BarChart3, Heart, Bell } from "lucide-react";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ cycle?: string }> }) {
   const params = await searchParams;
@@ -44,8 +44,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
       <Header cycles={allCycles as any} activeCycle={cycle as any} />
 
       <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-8 space-y-8 md:space-y-12 pb-8">
-        {/* Quick Access Menu Cards — Analisis, Saving, THR, Ihya, Import */}
-        <div className="grid grid-cols-5 gap-2.5 sm:gap-3 md:gap-4">
+        {/* Quick Access Menu Cards */}
+        <div className="grid grid-cols-6 gap-2.5 sm:gap-3 md:gap-4">
           {/* Analisis Card */}
           <Link href="/analisis" className="block group">
             <div className="bg-white dark:bg-dark-surface border border-slate-200/80 dark:border-white/10 rounded-2xl md:rounded-[1.75rem] p-3 sm:p-4 md:p-5 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md hover:border-primary/40 dark:hover:border-blue-500/40 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
@@ -90,6 +90,18 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
               </div>
               <h3 className="font-black text-[11px] sm:text-xs md:text-sm text-slate-800 dark:text-white tracking-tight">
                 Ihya
+              </h3>
+            </div>
+          </Link>
+
+          {/* Reminder Card */}
+          <Link href="/reminder" className="block group">
+            <div className="bg-white dark:bg-dark-surface border border-slate-200/80 dark:border-white/10 rounded-2xl md:rounded-[1.75rem] p-3 sm:p-4 md:p-5 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md hover:border-amber-500/40 dark:hover:border-amber-500/40 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-2xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-1.5 sm:mb-2 group-hover:scale-110 transition-transform">
+                <Bell className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+              </div>
+              <h3 className="font-black text-[11px] sm:text-xs md:text-sm text-slate-800 dark:text-white tracking-tight">
+                Reminder
               </h3>
             </div>
           </Link>
