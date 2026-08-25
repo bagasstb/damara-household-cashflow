@@ -146,6 +146,18 @@ export default function IhyaSpendingList({ items }: IhyaSpendingListProps) {
           );
         })}
       </div>
+
+      {/* Total */}
+      <div className="mt-6 pt-4 border-t border-slate-200 dark:border-white/10">
+        <div className="flex items-center justify-between px-1">
+          <span className="text-sm font-black text-slate-600 dark:text-slate-300 uppercase tracking-wider">
+            Total Bantuan
+          </span>
+          <span className="text-lg font-mono font-black text-blue-600 dark:text-blue-400">
+            Rp {formatCurrency(items.reduce((s, i) => s + i.amount, 0))}
+          </span>
+        </div>
+      </div>
     </section>
   );
 }
