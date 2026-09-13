@@ -79,9 +79,9 @@ export default function ImportMenuCard() {
       <button
         onClick={() => setOpen(true)}
         type="button"
-        className="block group w-full text-left cursor-pointer"
+        className="block group w-full h-full text-left cursor-pointer"
       >
-        <div className="bg-white dark:bg-dark-surface border border-slate-200/80 dark:border-white/10 rounded-2xl md:rounded-[1.75rem] p-3 sm:p-4 md:p-5 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md hover:border-amber-500/40 dark:hover:border-amber-500/40 transition-all hover:scale-[1.02] active:scale-[0.98]">
+        <div className="h-full bg-white dark:bg-dark-surface border border-slate-200/80 dark:border-white/10 rounded-2xl md:rounded-[1.75rem] p-3 sm:p-4 md:p-5 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md hover:border-amber-500/40 dark:hover:border-amber-500/40 transition-all hover:scale-[1.02] active:scale-[0.98]">
           <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-2xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-1.5 sm:mb-2 group-hover:scale-110 transition-transform">
             <CloudDownload className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
           </div>

@@ -6,13 +6,16 @@ import {
   ArrowRight,
   Loader2,
   CheckCircle2,
+  Calendar,
 } from "lucide-react";
 import { addReminder } from "@/lib/reminder-actions";
 import type { ReminderCategory } from "@/types/reminder";
 import { CATEGORY_LABELS } from "@/types/reminder";
+import { formatDateFull } from "@/lib/utils/formatCurrency";
 
 export default function ReminderEntryForm() {
   const formRef = useRef<HTMLFormElement>(null);
+  const dateInputRef = useRef<HTMLInputElement>(null);
 
   type ActionState = { error: string; success: boolean; timestamp?: number };
 
@@ -59,20 +62,25 @@ export default function ReminderEntryForm() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [displayAmount, setDisplayAmount] = useState("");
   const todayStr = new Date().toISOString().split("T")[0];
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState(todayStr);
   const [selectedCategory, setSelectedCategory] = useState<ReminderCategory>("lainnya");
 
   useEffect(() => {
     if (state.success) {
-      formRef.current?.reset();
-      setDisplayAmount("");
-      setSelectedDate("");
-      setSelectedCategory("lainnya");
-      setShowSuccess(true);
-      const timer = setTimeout(() => setShowSuccess(false), 2500);
-      return () => clearTimeout(timer);
+      const timer = setTimeout(() => {
+        formRef.current?.reset();
+        setDisplayAmount("");
+        setSelectedDate(todayStr);
+        setSelectedCategory("lainnya");
+        setShowSuccess(true);
+      }, 0);
+      const hideTimer = setTimeout(() => setShowSuccess(false), 2500);
+      return () => {
+        clearTimeout(timer);
+        clearTimeout(hideTimer);
+      };
     }
-  }, [state]);
+  }, [state, todayStr]);
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/\D/g, "");
@@ -205,23 +213,52 @@ export default function ReminderEntryForm() {
 
         {/* Tanggal Jatuh Tempo */}
         <div className="space-y-2">
-          <label
-            htmlFor="reminder-date-input"
-            className="text-[10px] font-black uppercase text-secondary dark:text-slate-400 tracking-wider ml-1"
-          >
-            Tanggal Jatuh Tempo
-          </label>
-          <input
-            id="reminder-date-input"
-            name="due_date"
-            type="date"
-            required
-            value={selectedDate}
-            min={todayStr}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            disabled={isPending}
-            className="w-full h-14 bg-slate-50 dark:bg-slate-900 border-2 border-transparent focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 rounded-2xl px-6 text-sm font-bold focus:outline-none transition-all dark:text-white disabled:opacity-50"
-          />
+          <div className="flex items-center justify-between">
+            <label
+              htmlFor="reminder-date-input"
+              className="text-[10px] font-black uppercase text-secondary dark:text-slate-400 tracking-wider ml-1"
+            >
+              Tanggal Jatuh Tempo
+            </label>
+            <button
+              type="button"
+              onClick={() => setSelectedDate(todayStr)}
+              className="text-[10px] font-black uppercase text-amber-600 hover:text-amber-700 transition-colors cursor-pointer"
+            >
+              Hari Ini
+            </button>
+          </div>
+          <div className="relative">
+            <div
+              onClick={() => {
+                try {
+                  dateInputRef.current?.showPicker();
+                } catch {
+                  dateInputRef.current?.focus();
+                }
+              }}
+              className="w-full h-14 bg-slate-50 dark:bg-slate-900 border-2 border-transparent focus-within:border-amber-500 focus-within:ring-4 focus-within:ring-amber-500/10 rounded-2xl px-6 flex items-center justify-between text-sm font-bold transition-all dark:text-white cursor-pointer"
+            >
+              <span>{formatDateFull(selectedDate || todayStr)}</span>
+              <Calendar className="w-5 h-5 text-slate-400" />
+            </div>
+            <input
+              ref={dateInputRef}
+              id="reminder-date-input"
+              name="due_date"
+              type="date"
+              required
+              value={selectedDate || todayStr}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              onClick={(e) => {
+                try {
+                  (e.target as HTMLInputElement).showPicker();
+                } catch {}
+              }}
+              disabled={isPending}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer pointer-events-auto z-10"
+            />
+          </div>
         </div>
 
         {/* Submit */}

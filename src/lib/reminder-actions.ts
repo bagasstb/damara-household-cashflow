@@ -7,10 +7,14 @@ import type { ReminderFormData } from "@/types/reminder";
 export async function addReminder(formData: ReminderFormData) {
   const supabase = await createClient();
 
+  const dueDateIso = formData.due_date.includes("T")
+    ? formData.due_date
+    : `${formData.due_date}T00:00:00.000Z`;
+
   const { error } = await supabase.from("reminders").insert({
     name: formData.name,
     amount: formData.amount,
-    due_date: new Date(formData.due_date).toISOString(),
+    due_date: dueDateIso,
     is_paid: formData.is_paid || false,
     category: formData.category,
   });

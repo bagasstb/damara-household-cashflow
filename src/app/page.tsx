@@ -45,10 +45,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
 
       <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-8 space-y-8 md:space-y-12 pb-8">
         {/* Quick Access Menu Cards */}
-        <div className="grid grid-cols-6 gap-2.5 sm:gap-3 md:gap-4">
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-2.5 sm:gap-3 md:gap-4">
           {/* Analisis Card */}
-          <Link href="/analisis" className="block group">
-            <div className="bg-white dark:bg-dark-surface border border-slate-200/80 dark:border-white/10 rounded-2xl md:rounded-[1.75rem] p-3 sm:p-4 md:p-5 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md hover:border-primary/40 dark:hover:border-blue-500/40 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <Link href="/analisis" className="block group h-full">
+            <div className="h-full bg-white dark:bg-dark-surface border border-slate-200/80 dark:border-white/10 rounded-2xl md:rounded-[1.75rem] p-3 sm:p-4 md:p-5 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md hover:border-primary/40 dark:hover:border-blue-500/40 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
               <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-2xl bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-1.5 sm:mb-2 group-hover:scale-110 transition-transform">
                 <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
               </div>
@@ -59,8 +59,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
           </Link>
 
           {/* Saving Card */}
-          <Link href={savingTotal ? `/saving/${savingTotal.year}` : "/saving"} className="block group">
-            <div className="bg-white dark:bg-dark-surface border border-slate-200/80 dark:border-white/10 rounded-2xl md:rounded-[1.75rem] p-3 sm:p-4 md:p-5 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md hover:border-violet-500/40 dark:hover:border-violet-500/40 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <Link href={savingTotal ? `/saving/${savingTotal.year}` : "/saving"} className="block group h-full">
+            <div className="h-full bg-white dark:bg-dark-surface border border-slate-200/80 dark:border-white/10 rounded-2xl md:rounded-[1.75rem] p-3 sm:p-4 md:p-5 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md hover:border-violet-500/40 dark:hover:border-violet-500/40 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
               <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-2xl bg-violet-500/10 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400 flex items-center justify-center mb-1.5 sm:mb-2 group-hover:scale-110 transition-transform">
                 <PiggyBank className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
               </div>
@@ -71,8 +71,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
           </Link>
 
           {/* THR Card */}
-          <Link href="/thr" className="block group">
-            <div className="bg-white dark:bg-dark-surface border border-slate-200/80 dark:border-white/10 rounded-2xl md:rounded-[1.75rem] p-3 sm:p-4 md:p-5 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md hover:border-emerald-500/40 dark:hover:border-emerald-500/40 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <Link href="/thr" className="block group h-full">
+            <div className="h-full bg-white dark:bg-dark-surface border border-slate-200/80 dark:border-white/10 rounded-2xl md:rounded-[1.75rem] p-3 sm:p-4 md:p-5 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md hover:border-emerald-500/40 dark:hover:border-emerald-500/40 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
               <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-1.5 sm:mb-2 group-hover:scale-110 transition-transform">
                 <Gift className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
               </div>
@@ -83,8 +83,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
           </Link>
 
           {/* Ihya Card */}
-          <Link href="/ihya" className="block group">
-            <div className="bg-white dark:bg-dark-surface border border-slate-200/80 dark:border-white/10 rounded-2xl md:rounded-[1.75rem] p-3 sm:p-4 md:p-5 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md hover:border-blue-500/40 dark:hover:border-blue-500/40 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <Link href="/ihya" className="block group h-full">
+            <div className="h-full bg-white dark:bg-dark-surface border border-slate-200/80 dark:border-white/10 rounded-2xl md:rounded-[1.75rem] p-3 sm:p-4 md:p-5 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md hover:border-blue-500/40 dark:hover:border-blue-500/40 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
               <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-2xl bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-1.5 sm:mb-2 group-hover:scale-110 transition-transform">
                 <Heart className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
               </div>
@@ -95,8 +95,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
           </Link>
 
           {/* Reminder Card */}
-          <Link href="/reminder" className="block group">
-            <div className="bg-white dark:bg-dark-surface border border-slate-200/80 dark:border-white/10 rounded-2xl md:rounded-[1.75rem] p-3 sm:p-4 md:p-5 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md hover:border-amber-500/40 dark:hover:border-amber-500/40 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <Link href="/reminder" className="block group h-full">
+            <div className="h-full bg-white dark:bg-dark-surface border border-slate-200/80 dark:border-white/10 rounded-2xl md:rounded-[1.75rem] p-3 sm:p-4 md:p-5 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md hover:border-amber-500/40 dark:hover:border-amber-500/40 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
               <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-2xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-1.5 sm:mb-2 group-hover:scale-110 transition-transform">
                 <Bell className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
               </div>

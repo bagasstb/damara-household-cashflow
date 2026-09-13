@@ -1,3 +1,7 @@
+import { formatDuration } from "@/lib/utils/formatCurrency";
+
+export { formatDuration };
+
 export type ReminderCategory = "pajak" | "service" | "asuransi" | "lainnya";
 
 export interface Reminder {
@@ -41,9 +45,39 @@ export function getDaysRemaining(dueDate: string): number {
 }
 
 export function getUrgencyColor(daysRemaining: number): { bg: string; text: string; label: string } {
-  if (daysRemaining < 0) return { bg: "bg-red-100 dark:bg-red-500/10", text: "text-red-600 dark:text-red-400", label: "Terlambat" };
-  if (daysRemaining <= 7) return { bg: "bg-red-100 dark:bg-red-500/10", text: "text-red-600 dark:text-red-400", label: `${daysRemaining} hari` };
-  if (daysRemaining <= 30) return { bg: "bg-amber-100 dark:bg-amber-500/10", text: "text-amber-600 dark:text-amber-400", label: `${daysRemaining} hari` };
-  if (daysRemaining <= 90) return { bg: "bg-blue-100 dark:bg-blue-500/10", text: "text-blue-600 dark:text-blue-400", label: `${daysRemaining} hari` };
-  return { bg: "bg-green-100 dark:bg-green-500/10", text: "text-green-600 dark:text-green-400", label: `${daysRemaining} hari` };
+  const formatted = formatDuration(daysRemaining);
+  if (daysRemaining < 0) {
+    return {
+      bg: "bg-red-100 dark:bg-red-500/10",
+      text: "text-red-600 dark:text-red-400",
+      label: `Terlambat (${formatted})`,
+    };
+  }
+  if (daysRemaining <= 7) {
+    return {
+      bg: "bg-red-100 dark:bg-red-500/10",
+      text: "text-red-600 dark:text-red-400",
+      label: formatted,
+    };
+  }
+  if (daysRemaining <= 30) {
+    return {
+      bg: "bg-amber-100 dark:bg-amber-500/10",
+      text: "text-amber-600 dark:text-amber-400",
+      label: formatted,
+    };
+  }
+  if (daysRemaining <= 90) {
+    return {
+      bg: "bg-blue-100 dark:bg-blue-500/10",
+      text: "text-blue-600 dark:text-blue-400",
+      label: formatted,
+    };
+  }
+  return {
+    bg: "bg-green-100 dark:bg-green-500/10",
+    text: "text-green-600 dark:text-green-400",
+    label: formatted,
+  };
 }
+

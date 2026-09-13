@@ -18,7 +18,7 @@ export async function getReminders(): Promise<Reminder[]> {
     id: item.id,
     name: item.name,
     amount: item.amount,
-    due_date: new Date(item.due_date).toISOString().split("T")[0],
+    due_date: typeof item.due_date === "string" ? item.due_date.split("T")[0] : new Date(item.due_date).toISOString().split("T")[0],
     is_paid: item.is_paid,
     category: item.category,
     created_at: item.created_at,
